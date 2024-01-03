@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: rgb(25, 25, 25);
+            color: aliceblue
+        }
+    </style>
+</head>
+
+<body>
+    <h1>testing public folder</h1>
+
+    <button id="rzp-button1">Pay now</button>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+    
+        const rbbutton = document.getElementById('rzp-button1');
+
+        rbbutton.addEventListener('click', async (event) => {
+            const response = await fetch('http://localhost:1234/order', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: 500 })
+            });
+             const convertResponse =await response.json()
+            try {
+                const { order_id } = convertResponse; // Extract order_id from the response
+                var options = {
+                    key: "rzp_test_Kkhlwm7ClOQXaZ",
+                    amount: "50000",
+                    currency: "INR",
+                    order_id: order_id, // Use the extracted order_id here
+                    handler: function (response) {
+                        alert(response.razorpay_payment_id);
+                        alert(response.razorpay_order_id);
+                        alert(response.razorpay_signature);
+                    },
+                };
+
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            } catch (error) {
+            }
+        });
+    </script>
+</body>
+
+</html>
